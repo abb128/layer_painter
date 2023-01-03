@@ -48,13 +48,17 @@ class LP_OT_PaintChannel(bpy.types.Operator):
             ngroup = bpy.data.node_groups[self.node_group]
             tex = ngroup.nodes[self.node_name]
 
+        img_name = utils.active_material(context).lp.selected.node.label
+        if channel:
+            img_name = img_name + "." + channel.name
+        
         # create or get image
         if not tex.image:
             if self.channel:
-                img = utils_paint.create_image("image", self.resolution, self.color, channel.is_data)
+                img = utils_paint.create_image(img_name, self.resolution, self.color, channel.is_data)
                 tex.image = img
             else:
-                img = utils_paint.create_image("image", self.resolution, (0,0,0,1), False)
+                img = utils_paint.create_image(img_name, self.resolution, (0,0,0,1), False)
                 tex.image = img
         else:
             img = tex.image
