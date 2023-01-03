@@ -5,6 +5,10 @@
             "uid": "mask_basics",
             "masks": [
                 {
+                    "name": "Texture Mask",
+                    "thumbnail": "Texture Mask.png"
+                },
+                {
                     "name": "Spots",
                     "thumbnail": "Spots.jpg"
                 },
