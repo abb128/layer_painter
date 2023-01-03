@@ -181,6 +181,7 @@ class LP_OT_BakeChannelsModal(bpy.types.Operator):
 
         self.prev_samples = context.scene.cycles.samples
         context.scene.cycles.samples = 2
+        context.scene.cycles.use_denoising = False
 
         self.prev_view_transform = context.scene.view_settings.view_transform
         context.scene.view_settings.view_transform = 'Standard'
