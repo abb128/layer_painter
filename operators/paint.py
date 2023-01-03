@@ -31,6 +31,8 @@ class LP_OT_PaintChannel(bpy.types.Operator):
                                         name="Color",
                                         description="Fill color for the created image")
 
+    mask: bpy.props.BoolProperty(options={"HIDDEN", "SKIP_SAVE"}, default=False)
+
     @classmethod
     def poll(cls, context):
         mat = utils.active_material(context)
@@ -64,7 +66,7 @@ class LP_OT_PaintChannel(bpy.types.Operator):
             img = tex.image
 
         utils_paint.save_all_unsaved()
-        utils_paint.paint_image(img)
+        utils_paint.paint_image(img, mask=self.mask)
         return {"FINISHED"}
 
     def draw(self, context):

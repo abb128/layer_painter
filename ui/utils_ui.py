@@ -16,9 +16,11 @@ def draw_lp_group(layout, ntree, group_node, mat, layer, inp_offset = 1):
 
             name = inp.name
             non_color = False
+            mask = False
             if "|" in name:
                 name, flags = name.split("|")
-                non_color = "N" in flags
+                mask = "M" in flags
+                non_color = mask or ("N" in flags)
 
             # draw convert to texture input for color sockets
             if inp.bl_idname == constants.SOCKETS["COLOR"]:
@@ -39,7 +41,7 @@ def draw_lp_group(layout, ntree, group_node, mat, layer, inp_offset = 1):
             if len(inp.links) == 0:
                 row.prop(inp, "default_value", text=name)
             elif inp.links[0].from_node.bl_idname == constants.NODES["TEX"]:
-                draw_texture_input(row, inp.links[0].from_node, ntree=ntree, name=name, icon_only=True, edit_mapping=True, non_color=non_color)
+                draw_texture_input(row, inp.links[0].from_node, ntree=ntree, name=name, icon_only=True, edit_mapping=True, non_color=non_color, mask=mask)
 
     # draw special nodes
     for node in group_node.node_tree.nodes:
@@ -60,7 +62,7 @@ def draw_lp_group(layout, ntree, group_node, mat, layer, inp_offset = 1):
             col.template_ID(node, "image", new="image.new", open="image.open")
 
 
-def draw_texture_input(layout, tex_node, ntree, channel=None, name="", icon_only=False, edit_mapping=False, non_color=False):
+def draw_texture_input(layout, tex_node, ntree, channel=None, name="", icon_only=False, edit_mapping=False, non_color=False, mask=False):
     """ draws a row for the given tex node including the painting options """
     if tex_node:
         if name:
@@ -99,10 +101,10 @@ def draw_texture_input(layout, tex_node, ntree, channel=None, name="", icon_only
     if tex_node and bpy.context.mode == "PAINT_TEXTURE" and bpy.context.scene.tool_settings.image_paint.canvas == tex_node.image:
         row.operator("lp.stop_painting", icon="CHECKMARK", text="Finish" if not icon_only else "")
     else:
+        op = row.operator("lp.paint_channel", icon="BRUSH_DATA", text="Paint" if not icon_only else "")
+        op.mask = mask
         if channel:
-            op = row.operator("lp.paint_channel", icon="BRUSH_DATA", text="Paint" if not icon_only else "")
             op.channel = channel
         else:
-            op = row.operator("lp.paint_channel", icon="BRUSH_DATA", text="Paint" if not icon_only else "")
             op.node_group = ntree.name
             op.node_name = tex_node.name

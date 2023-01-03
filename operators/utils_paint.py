@@ -18,11 +18,20 @@ def create_image(name, resolution, color, is_data=False):
     return img
 
 
-def paint_image(img):
+def paint_image(img, mask=False):
     """ sets up the 3D view for painting on the given image """
     bpy.ops.object.mode_set(mode='TEXTURE_PAINT')
     bpy.context.scene.tool_settings.image_paint.mode = 'IMAGE'
     bpy.context.scene.tool_settings.image_paint.canvas = img
+
+    # Force monochrome color
+    if mask:
+        col = bpy.context.tool_settings.image_paint.brush.color
+        if col.s != 0:
+            val = 1.0
+            bpy.context.tool_settings.image_paint.brush.color.r = val
+            bpy.context.tool_settings.image_paint.brush.color.g = val
+            bpy.context.tool_settings.image_paint.brush.color.b = val
     
     
 def save_all_unsaved():
