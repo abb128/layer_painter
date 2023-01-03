@@ -14,6 +14,12 @@ def draw_lp_group(layout, ntree, group_node, mat, layer, inp_offset = 1):
         if i >= inp_offset:
             row = layout.row(align=True)
 
+            name = inp.name
+            non_color = False
+            if "|" in name:
+                name, flags = name.split("|")
+                non_color = "N" in flags
+
             # draw convert to texture input for color sockets
             if inp.bl_idname == constants.SOCKETS["COLOR"]:
                 op = row.operator("lp.toggle_texture", text="", emboss=False, icon="SHADING_RENDERED" if len(inp.links) == 0 else "SHADING_TEXTURE")
@@ -31,9 +37,9 @@ def draw_lp_group(layout, ntree, group_node, mat, layer, inp_offset = 1):
 
             # draw input value
             if len(inp.links) == 0:
-                row.prop(inp, "default_value", text=inp.name)
+                row.prop(inp, "default_value", text=name)
             elif inp.links[0].from_node.bl_idname == constants.NODES["TEX"]:
-                draw_texture_input(row, inp.links[0].from_node, ntree=ntree, name=inp.name, icon_only=True, edit_mapping=True)
+                draw_texture_input(row, inp.links[0].from_node, ntree=ntree, name=name, icon_only=True, edit_mapping=True, non_color=non_color)
 
     # draw special nodes
     for node in group_node.node_tree.nodes:

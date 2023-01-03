@@ -393,6 +393,22 @@ class LP_LayerProperties(bpy.types.PropertyGroup):
         node = ntree.nodes.new(constants.NODES["GROUP"])
         node.node_tree = utils_import.get_hidden_group_copy(os.path.join(constants.ASSET_LOC, asset_data.blend_file), asset_data.name)
         node.label = asset_data.name
+
+        for i, inp in enumerate(node.inputs):
+            name = inp.name
+            non_color = False
+            force_texture = False
+            if "|" in name:
+                name, flags = name.split("|")
+                non_color = "N" in flags
+                force_texture = "T" in flags
+            
+            inp.name = name
+
+            if force_texture:
+                bpy.ops.lp.toggle_texture(node_group=ntree.name, node_name=node.name, input_index=i)
+
+
         return node
 
     def __remove_asset_node(self, ntree, node):
